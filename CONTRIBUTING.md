@@ -1,13 +1,25 @@
-# Contributing to Guard CLI
+# Contributing to Sorolint
 
-Thank you for helping improve the static analyzer. This guide covers **local setup**, a **short `syn` tutorial with examples**, **how to add a check** (using `auth.rs` as a template), and **how to write test contracts**.
+Thank you for helping improve the static analyzer and linter. This guide covers **contribution policies**, **local setup**, a **short `syn` tutorial with examples**, **how to add a check** (using `auth.rs` as a template), and **how to write test contracts**.
 
 **Please note:** We are committed to providing a welcoming and inclusive environment for all contributors. Read our [Code of Conduct](.github/CODE_OF_CONDUCT.md) to understand our community standards.
 
-Read the [architecture overview](docs/architecture.md) first for the crate dependency graph,
-scan data flow, and core types.
+Read the [architecture overview](docs/architecture.md) first for the crate dependency graph, scan data flow, and core types.
 
 Release managers should follow the [crates.io release process](docs/release.md).
+
+---
+
+## Contribution Policy & Pull Request Review
+
+We welcome open contributions across all areas of the repository — including vulnerability checks (`crates/checks`), core engine logic (`crates/analyzer`), CLI UX (`crates/cli`), test contract fixtures (`test-contracts`), and documentation.
+
+Please note our review guidelines:
+- **Open Scope**: Contributors are free to submit issues and Pull Requests targeting any section or crate in the project.
+- **Manual Review**: Every submitted Pull Request will be manually reviewed, compiled, and evaluated by the repository maintainers.
+- **Maintainer Approval**: Merging into `main` is strictly at the sole discretion of the project maintainers to preserve analysis accuracy, security standards, and release stability.
+
+---
 
 ## Local development setup
 
@@ -22,8 +34,8 @@ Release managers should follow the [crates.io release process](docs/release.md).
 2. **Clone this repository** and `cd` into the workspace root:
 
    ```bash
-   git clone https://github.com/SorobanGuard/Guard-CLI.git
-   cd Guard-CLI
+   git clone https://github.com/Sorobscan/Sorolint.git
+   cd Sorolint
    ```
 
 3. **Build and run the full test suite:**
@@ -36,8 +48,8 @@ Release managers should follow the [crates.io release process](docs/release.md).
 4. **Run the CLI** against bundled fixtures:
 
    ```bash
-   cargo run -p soroban-guard-cli -- scan test-contracts/vulnerable
-   cargo run -p soroban-guard-cli -- scan test-contracts/safe --json
+   cargo run -p sorolint -- scan test-contracts/vulnerable
+   cargo run -p sorolint -- scan test-contracts/safe --json
    ```
 
 5. **Standalone Soroban crates** — Paths under `test-contracts/` are listed in `[workspace.exclude]`. To type-check a fixture on its own:
@@ -46,7 +58,7 @@ Release managers should follow the [crates.io release process](docs/release.md).
    cd test-contracts/arithmetic-safe && cargo check
    ```
 
-6. **Install the `soroban-guard` binary** (optional):
+6. **Install the `sorolint` binary** (optional):
 
    ```bash
    cargo install --path crates/cli
@@ -170,7 +182,7 @@ Fixture crates live under **`test-contracts/`** and are **excluded** from the ro
 
 4. **Naming** — Use `*-vulnerable` / `*-safe` pairs for clarity in docs and CI.
 
-5. **Scanning** — `soroban-guard scan test-contracts/my-rule-vulnerable` only reads `.rs` files; building first is optional.
+5. **Scanning** — `sorolint scan test-contracts/my-rule-vulnerable` only reads `.rs` files; building first is optional.
 
 ---
 
