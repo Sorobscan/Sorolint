@@ -51,7 +51,7 @@ impl<'ast> Visit<'ast> for TokenAmountVisitor {
                             "Token transfer amount is not validated to be greater than zero"
                                 .to_string(),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unchecked-token-amount-medium"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unchecked-token-amount-medium"
                                 .to_string(),
                         ),
                         suggestion: Some(

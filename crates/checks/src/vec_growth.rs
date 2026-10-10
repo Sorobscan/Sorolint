@@ -60,7 +60,7 @@ impl Check for UnboundedVecGrowthCheck {
                          Soroban's size limit, bricking the contract."
                     ),
                     rule_url: Some(
-                        "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unbounded-vec-growth-medium"
+                        "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unbounded-vec-growth-medium"
                             .to_string(),
                     ),
                     suggestion: Some(

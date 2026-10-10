@@ -58,7 +58,7 @@ impl<'ast> Visit<'ast> for RandomnessVisitor {
                     self.env_ident, method_name
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unsafe-randomness-high"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unsafe-randomness-high"
                         .to_string(),
                 ),
                 suggestion: Some(

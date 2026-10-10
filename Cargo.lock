@@ -441,30 +441,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "soroban-guard-analyzer"
-version = "0.1.0"
-dependencies = [
- "glob",
- "rayon",
- "serde",
- "soroban-guard-checks",
- "syn 2.0.118",
- "thiserror",
- "walkdir",
-]
-
-[[package]]
-name = "soroban-guard-checks"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "syn 2.0.118",
-]
-
-[[package]]
-name = "soroban-guard-cli"
+name = "sorolint"
 version = "0.1.0"
 dependencies = [
  "clap",
@@ -473,9 +450,33 @@ dependencies = [
  "notify",
  "serde",
  "serde_json",
- "soroban-guard-analyzer",
- "soroban-guard-checks",
+ "sorolint-analyzer",
+ "sorolint-checks",
  "toml",
+]
+
+[[package]]
+name = "sorolint-analyzer"
+version = "0.1.0"
+dependencies = [
+ "glob",
+ "rayon",
+ "serde",
+ "sorolint-checks",
+ "syn 2.0.118",
+ "thiserror",
+ "walkdir",
+]
+
+[[package]]
+name = "sorolint-checks"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "sorolint-analyzer",
+ "syn 2.0.118",
 ]
 
 [[package]]

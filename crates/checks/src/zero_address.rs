@@ -218,7 +218,7 @@ impl Check for MissingZeroAddressCheck {
                     addr_params.join(", ")
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-zero-address-check-medium"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-zero-address-check-medium"
                         .to_string(),
                 ),
                 suggestion: Some(format!(

@@ -38,7 +38,7 @@ impl Check for ReentrancyRiskCheck {
                          storage (checks-effects-interactions) or re-read state after the call."
                     ),
                     rule_url: Some(
-                        "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#reentrancy-risk-high"
+                        "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#reentrancy-risk-high"
                             .to_string(),
                     ),
                     suggestion: Some(format!(

@@ -36,7 +36,7 @@ impl Check for MutableGlobalStateCheck {
                              not persisted on-chain."
                         ),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#mutable-global-state-high"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#mutable-global-state-high"
                                 .to_string(),
                         ),
                         suggestion: Some(

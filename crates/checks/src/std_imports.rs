@@ -88,7 +88,7 @@ fn push_finding(out: &mut Vec<Finding>, idx: usize, trimmed: &str) {
             trimmed.trim_end_matches(';')
         ),
         rule_url: Some(
-            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#forbidden-std-imports-high"
+            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#forbidden-std-imports-high"
                 .to_string(),
         ),
         suggestion: Some(

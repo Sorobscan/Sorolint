@@ -32,7 +32,7 @@ impl Check for MissingInputLengthBoundCheck {
                                 param_name
                             ),
                             rule_url: Some(
-                                "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-input-length-bound-medium"
+                                "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-input-length-bound-medium"
                                     .to_string(),
                             ),
                             suggestion: Some(

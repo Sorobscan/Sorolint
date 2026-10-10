@@ -1,9 +1,9 @@
 [package]
-name = "soroban-guard-analyzer"
+name = "sorolint-analyzer"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "AST walking and check orchestration for Soroban Guard"
+description = "AST walking and check orchestration for Sorolint"
 repository.workspace = true
 readme.workspace = true
 keywords.workspace = true
@@ -11,7 +11,7 @@ categories.workspace = true
 publish = true
 
 [dependencies]
-soroban-guard-checks = { path = "../checks", version = "0.1.0" }
+sorolint-checks = { path = "../checks", version = "0.1.0" }
 syn.workspace = true
 serde.workspace = true
 walkdir.workspace = true

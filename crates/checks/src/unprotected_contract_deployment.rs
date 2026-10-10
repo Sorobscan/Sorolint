@@ -43,7 +43,7 @@ impl Check for UnprotectedContractDeploymentCheck {
                                 "Contract deployment call lacks valid require_auth protection"
                                     .to_string(),
                             rule_url: Some(
-                                "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unprotected-contract-deployment-high"
+                                "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unprotected-contract-deployment-high"
                                     .to_string(),
                             ),
                             suggestion: Some(

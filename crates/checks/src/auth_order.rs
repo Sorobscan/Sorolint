@@ -44,7 +44,7 @@ impl Check for AuthAfterStorageWriteCheck {
                              before the caller was authorized."
                         ),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#auth-after-storage-write-high"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#auth-after-storage-write-high"
                                 .to_string(),
                         ),
                         suggestion: Some(format!(

@@ -47,7 +47,7 @@ impl Check for MissingRequireAuthCheck {
                      they are authorized."
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-require-auth-high"
                         .to_string(),
                 ),
                 suggestion: Some(format!(

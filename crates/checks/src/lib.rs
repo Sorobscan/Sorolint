@@ -140,7 +140,7 @@ pub trait Check {
 ///
 /// # Example
 /// ```
-/// use soroban_guard_checks::{Finding, Severity, group_by_file};
+/// use sorolint_checks::{Finding, Severity, group_by_file};
 ///
 /// let findings = vec![
 ///     Finding {
@@ -168,7 +168,7 @@ pub fn group_by_file<'a>(findings: &'a [Finding]) -> BTreeMap<&'a str, Vec<&'a F
 ///
 /// # Example
 /// ```
-/// use soroban_guard_checks::{Finding, Severity, group_by_severity};
+/// use sorolint_checks::{Finding, Severity, group_by_severity};
 ///
 /// let findings = vec![
 ///     Finding {

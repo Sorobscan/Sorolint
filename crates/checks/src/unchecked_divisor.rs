@@ -55,7 +55,7 @@ impl<'ast> Visit<'ast> for DivisorExprVisitor<'ast> {
                     function_name: self.current_function_name.clone(),
                     description,
                     rule_url: Some(
-                        "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unchecked-divisor-high"
+                        "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unchecked-divisor-high"
                             .to_string(),
                     ),
                     suggestion: Some(

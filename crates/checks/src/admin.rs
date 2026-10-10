@@ -7,7 +7,7 @@ use crate::util::{
 use crate::{Check, Finding, Severity};
 use syn::spanned::Spanned;
 use syn::visit::{self, Visit};
-use syn::{Block, ExprIf, ExprMethodCall, File, Visibility};
+use syn::{Block, Expr, ExprIf, ExprMethodCall, File, Visibility};
 
 const CHECK_NAME: &str = "unprotected-admin";
 
@@ -91,7 +91,7 @@ impl Check for UnprotectedAdminCheck {
                      Anyone may invoke this entrypoint."
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unprotected-admin-high"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unprotected-admin-high"
                         .to_string(),
                 ),
                 suggestion: Some(
@@ -118,6 +118,7 @@ fn body_has_auth_gate(block: &Block, address_names: &[String]) -> bool {
     v.found || v.storage_read_and_conditional
 }
 
+#[allow(dead_code)]
 fn block_diverges(block: &Block) -> bool {
     block.stmts.iter().any(|stmt| match stmt {
         syn::Stmt::Expr(expr, _) => expr_diverges(expr),
@@ -126,6 +127,7 @@ fn block_diverges(block: &Block) -> bool {
     })
 }
 
+#[allow(dead_code)]
 fn expr_diverges(expr: &Expr) -> bool {
     match expr {
         Expr::Return(_) => true,

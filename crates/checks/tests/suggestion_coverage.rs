@@ -5,7 +5,7 @@
 //! relevant check.  If a check does not produce a finding for the given snippet
 //! the test reports a clear failure message rather than silently passing.
 
-use soroban_guard_checks::{default_checks, Finding};
+use sorolint_checks::{default_checks, Finding};
 use syn::parse_file;
 
 /// Run a single check (identified by name) against `src`, assert at least one

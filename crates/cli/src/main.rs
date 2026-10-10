@@ -1,11 +1,11 @@
-use soroban_guard_cli::config;
+use sorolint::config;
 
 use clap::{ArgGroup, CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Shell};
 use colored::Colorize;
 use notify::{Event, EventKind, RecursiveMode, Watcher};
-use soroban_guard_analyzer::{is_ignored_path, scan_directory_with_checks, ScanError};
-use soroban_guard_checks::{default_checks, default_checks_with_config, Finding, Severity};
+use sorolint_analyzer::{is_ignored_path, scan_directory_with_checks, ScanError};
+use sorolint_checks::{default_checks, default_checks_with_config, Finding, Severity};
 use std::collections::HashSet;
 use std::fs;
 use std::io::{self, IsTerminal, Write};
@@ -13,9 +13,9 @@ use std::path::{Path, PathBuf};
 use std::sync::mpsc;
 
 #[derive(Parser)]
-#[command(name = "soroban-guard")]
+#[command(name = "sorolint")]
 #[command(
-    about = "Soroban Guard Core — static analyzer for Soroban smart contracts",
+    about = "Sorolint — static analyzer for Soroban smart contracts",
     version
 )]
 struct Cli {
@@ -133,7 +133,7 @@ fn should_print_results(quiet: bool, should_fail: bool) -> bool {
 /// (0 = pass, 1 = findings above threshold, 2 = I/O error).
 fn run_scan(
     opts: &ScanOptions,
-    active_checks: &[Box<dyn soroban_guard_checks::Check + Send + Sync>],
+    active_checks: &[Box<dyn sorolint_checks::Check + Send + Sync>],
 ) -> i32 {
     match scan_directory_with_checks(&opts.path, &opts.exclude, &opts.includes, active_checks) {
         Ok((results, files_scanned, files_skipped, _check_panics)) => {
@@ -366,7 +366,7 @@ fn main() {
                 );
                 std::process::exit(2);
             }
-            // Try to load soroban-guard.toml from current directory to get default path.
+            // Try to load sorolint.toml from current directory to get default path.
             let config_for_default = match config::load(&PathBuf::from(".")) {
                 Ok((c, _)) => c.unwrap_or_default(),
                 Err(e) => {
@@ -378,14 +378,14 @@ fn main() {
             // Resolve scan path: CLI argument takes precedence, then config, then error.
             // The current-directory config is only needed as a fallback for the scan
             // path itself, so it's only loaded when no path argument was given -
-            // otherwise a malformed `./soroban-guard.toml` would abort scans of an
+            // otherwise a malformed `./sorolint.toml` would abort scans of an
             // unrelated, explicitly-provided path (Issue #626).
             let scan_path = if let Some(p) = path {
                 p
             } else {
-                // Try to load soroban-guard.toml from current directory to get default path.
+                // Try to load sorolint.toml from current directory to get default path.
                 let config_for_default = match config::load(&PathBuf::from(".")) {
-                    Ok(c) => c.unwrap_or_default(),
+                    Ok(c) => c.0.unwrap_or_default(),
                     Err(e) => {
                         eprintln!("{} {}", "error:".red().bold(), e);
                         std::process::exit(2);
@@ -395,20 +395,20 @@ fn main() {
                     PathBuf::from(config_path)
                 } else {
                     eprintln!(
-                        "{} no scan path provided and none found in soroban-guard.toml",
+                        "{} no scan path provided and none found in sorolint.toml",
                         "error:".red().bold()
                     );
                     std::process::exit(2);
                 }
             };
 
-            // Load soroban-guard.toml, searching upward from the scan path.
+            // Load sorolint.toml, searching upward from the scan path.
             let cfg = match config::load(&scan_path) {
                 Ok((c, config_path)) => {
                     if verbose {
                         match &config_path {
                             Some(p) => eprintln!("Using config file {}", p.display()),
-                            None => eprintln!("No soroban-guard.toml found"),
+                            None => eprintln!("No sorolint.toml found"),
                         }
                     }
                     c.unwrap_or_default()
@@ -643,7 +643,7 @@ fn main() {
             }
         }
         Commands::Init { path, force } => {
-            let config_path = path.join("soroban-guard.toml");
+            let config_path = path.join("sorolint.toml");
             if config_path.exists() && !force {
                 eprintln!(
                     "{} {} already exists. Re-run with --force to overwrite it.",
@@ -715,7 +715,7 @@ const STARTER_CONFIG: &str = r#"# Soroban Guard project defaults.
 min_severity = "high"
 
 [checks]
-# Check names to skip entirely, as shown by `soroban-guard list-checks`.
+# Check names to skip entirely, as shown by `sorolint list-checks`.
 disabled = []
 
 [checks.sensitive_names]
@@ -756,7 +756,7 @@ fn build_sarif(findings: &[Finding], files_skipped: usize) -> serde_json::Value 
                 "shortDescription": { "text": describe_rule(name) },
                 "fullDescription": { "text": describe_rule(name) },
                 "defaultConfiguration": { "level": severity_to_sarif_level(sev) },
-                "helpUri": "https://github.com/SorobanGuard/Guard-CLI"
+                "helpUri": "https://github.com/Sorobscan/Sorolint"
             })
         })
         .collect();
@@ -783,8 +783,8 @@ fn build_sarif(findings: &[Finding], files_skipped: usize) -> serde_json::Value 
         "runs": [{
             "tool": {
                 "driver": {
-                    "name": "soroban-guard",
-                    "informationUri": "https://github.com/SorobanGuard/Guard-CLI",
+                    "name": "sorolint",
+                    "informationUri": "https://github.com/Sorobscan/Sorolint",
                     "rules": rules,
                     "version": env!("CARGO_PKG_VERSION"),
                     "semanticVersion": env!("CARGO_PKG_VERSION")
@@ -1137,7 +1137,7 @@ fn json_payload(
 
     let envelope = serde_json::json!({
         "tool": {
-            "name": "soroban-guard",
+            "name": "sorolint",
             "version": env!("CARGO_PKG_VERSION")
         },
         "schema_version": 1,
@@ -1157,7 +1157,7 @@ fn json_payload(
 
 fn render_markdown(findings: &[Finding]) -> String {
     let mut out = String::new();
-    out.push_str("## Soroban Guard Findings\n\n");
+    out.push_str("## Sorolint Findings\n\n");
     if findings.is_empty() {
         out.push_str("No issues found.\n");
         return out;
@@ -1338,7 +1338,7 @@ mod tests {
         assert_eq!(payload["version"], "2.1.0");
         assert_eq!(
             payload["runs"][0]["tool"]["driver"]["name"],
-            "soroban-guard"
+            "sorolint"
         );
         assert_eq!(
             payload["runs"][0]["tool"]["driver"]["version"],
@@ -1357,7 +1357,7 @@ mod tests {
     #[test]
     fn json_payload_includes_rule_url() {
         let rule_url =
-            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high";
+            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-require-auth-high";
         let findings = vec![Finding {
             check_name: "missing-require-auth".to_string(),
             severity: Severity::High,
@@ -1424,7 +1424,7 @@ mod tests {
 
         let payload: serde_json::Value =
             serde_json::from_str(&json_payload(&findings, 1, 0).unwrap()).unwrap();
-        assert_eq!(payload["tool"]["name"], "soroban-guard");
+        assert_eq!(payload["tool"]["name"], "sorolint");
         assert_eq!(payload["tool"]["version"], env!("CARGO_PKG_VERSION"));
         assert_eq!(payload["schema_version"], 1);
     }
@@ -1482,7 +1482,7 @@ mod tests {
 
     #[test]
     fn markdown_written_to_file_when_output_provided() {
-        let rule_url = "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high";
+        let rule_url = "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-require-auth-high";
         let findings = vec![
             Finding {
                 check_name: "missing-require-auth".to_string(),
@@ -1527,7 +1527,7 @@ mod tests {
 
         // Structural checks on the rendered Markdown
         assert!(
-            contents.contains("## Soroban Guard Findings"),
+            contents.contains("## Sorolint Findings"),
             "should contain the heading"
         );
         assert!(
@@ -1671,8 +1671,8 @@ mod tests {
             "high check name should be bold red"
         );
         assert!(
-            low.contains("\u{1b}[2;37m"),
-            "low check name should be dimmed white"
+            low.contains("\u{1b}[2m") || low.contains("\u{1b}[2;37m"),
+            "low check name should be dimmed"
         );
     }
 

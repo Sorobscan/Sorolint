@@ -1,5 +1,5 @@
-use soroban_guard_analyzer::{scan_directory, scan_directory_with_checks};
-use soroban_guard_checks::default_checks_with_config;
+use sorolint_analyzer::{scan_directory, scan_directory_with_checks};
+use sorolint_checks::default_checks_with_config;
 use std::path::PathBuf;
 
 #[path = "../src/config.rs"]
@@ -232,6 +232,9 @@ fn admin_event_safe_produces_no_findings() {
             .all(|f| f.check_name != "missing-event-for-admin-change"),
         "admin-event-safe unexpectedly produced missing-event-for-admin-change; findings: {findings:#?}"
     );
+}
+
+#[test]
 fn admin_event_fixtures() {
     assert_fixture_pair("admin-event", "missing-event-for-admin-change");
 }
@@ -293,8 +296,8 @@ fn ttl_mixed_key_scenario_produces_finding() {
 /// extends the built-in admin check so that custom function names are flagged.
 #[test]
 fn config_extra_sensitive_names_affect_admin_check() {
-    use soroban_guard_analyzer::scan_directory_with_checks;
-    use soroban_guard_checks::default_checks_with_config;
+    use sorolint_analyzer::scan_directory_with_checks;
+    use sorolint_checks::default_checks_with_config;
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -366,7 +369,7 @@ extra = ["drain"]
 /// Verify that `soroban-guard.toml` `[scan] path` is used when no CLI path is provided
 #[test]
 fn config_scan_path_as_fallback() {
-    use soroban_guard_analyzer::scan_directory;
+    use sorolint_analyzer::scan_directory;
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -395,7 +398,7 @@ impl C {
 
     // Config file that specifies the scan path
     fs::write(
-        root.join("soroban-guard.toml"),
+        root.join("sorolint.toml"),
         r#"
 [scan]
 path = "src"

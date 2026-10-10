@@ -18,13 +18,11 @@ maintainer decides otherwise.
 Use one of the following channels:
 
 1. **GitHub Private Security Advisory (preferred)**
-   Navigate to the repository's **Security** tab → **Advisories** → **Report a vulnerability**.
+   Navigate to the repository's **Security** tab → **Advisories** → **Report a vulnerability** on [https://github.com/Sorobscan/Sorolint](https://github.com/Sorobscan/Sorolint).
    GitHub keeps the report private until a fix is released.
 
 2. **Email**
-   Send details to **security@soroban-guard.dev** (monitored by maintainers).
-   Encrypt sensitive reports with the PGP key published at the email address above if
-   you need to share exploit code or credentials.
+   Send details to **owolabenjade@gmail.com** (monitored by Owolabenjade).
 
 Include as much of the following as possible:
 
@@ -49,9 +47,9 @@ private until a fix has been released or 90 days have elapsed, whichever comes f
 
 ### In scope
 
-- Vulnerabilities in the `soroban-guard` CLI binary itself (e.g. path traversal,
+- Vulnerabilities in the `sorolint` CLI binary itself (e.g. path traversal,
   arbitrary code execution when processing malicious contract source files)
-- Vulnerabilities in the `soroban-guard-analyzer` or `soroban-guard-checks` crates
+- Vulnerabilities in the `sorolint-analyzer` or `sorolint-checks` crates
   that could allow a crafted input to compromise the host running the tool
 - Supply-chain issues with direct dependencies declared in `Cargo.toml`
 
@@ -59,7 +57,7 @@ private until a fix has been released or 90 days have elapsed, whichever comes f
 
 - False positives or false negatives in vulnerability detectors (these are bugs,
   not security issues — please file a normal GitHub issue)
-- Vulnerabilities in Soroban smart contracts that Soroban Guard *analyses* but does
+- Vulnerabilities in Soroban smart contracts that Sorolint *analyses* but does
   not execute
 - Security issues in third-party tools or services (report those upstream)
 - Issues that require physical access to the analyst's machine
@@ -98,7 +96,7 @@ If a GPG or SSH key used for signing releases is compromised:
 
 ### When in Doubt
 
-If you suspect a key is compromised but are uncertain about the scope, **contact a maintainer privately** before proceeding. Do not commit any secrets or keys to the repository in the process.
+If you suspect a key is compromised but are uncertain about the scope, **contact Owolabenjade privately** via **owolabenjade@gmail.com** before proceeding. Do not commit any secrets or keys to the repository in the process.
 
 ## Credit and Acknowledgements
 

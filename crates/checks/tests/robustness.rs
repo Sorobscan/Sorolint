@@ -4,11 +4,33 @@
 /// to ensure no check panics, providing early detection of crashes from
 /// unexpected AST shapes or out-of-bounds indexing.
 
-use soroban_guard_checks::analyzer::{analyze_source, AnalysisResult};
+use sorolint_checks::default_checks;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::panic::{catch_unwind, AssertUnwindSafe};
 
-fn find_rust_sources(root: &str, limit: Option<usize>) -> Vec<PathBuf> {
+fn analyze_source(content: &str, _filename: &str) -> Result<Vec<String>, String> {
+    let file = syn::parse_file(content).map_err(|e| e.to_string())?;
+    let checks = default_checks();
+    let mut panics = Vec::new();
+    for check in checks {
+        if let Err(err) = catch_unwind(AssertUnwindSafe(|| {
+            check.run(&file, content);
+        })) {
+            let msg = if let Some(s) = err.downcast_ref::<&str>() {
+                s.to_string()
+            } else if let Some(s) = err.downcast_ref::<String>() {
+                s.clone()
+            } else {
+                "unknown panic".to_string()
+            };
+            panics.push(format!("{}: {}", check.name(), msg));
+        }
+    }
+    Ok(panics)
+}
+
+fn find_rust_sources<P: AsRef<Path>>(root: P, limit: Option<usize>) -> Vec<PathBuf> {
     let mut sources = Vec::new();
     if let Ok(entries) = fs::read_dir(root) {
         for entry in entries.flatten() {
@@ -21,7 +43,7 @@ fn find_rust_sources(root: &str, limit: Option<usize>) -> Vec<PathBuf> {
                     }
                 }
             } else if path.is_dir() {
-                let subdir = find_rust_sources(path.to_str().unwrap_or(""), limit);
+                let subdir = find_rust_sources(&path, limit);
                 sources.extend(subdir);
                 if let Some(l) = limit {
                     if sources.len() >= l {
@@ -43,7 +65,7 @@ fn test_no_panics_on_real_sources() {
             let result = analyze_source(&content, source_path.to_str().unwrap_or("unknown"));
 
             match result {
-                Ok(AnalysisResult { panics, .. }) if !panics.is_empty() => {
+                Ok(panics) if !panics.is_empty() => {
                     panic!(
                         "Checks panicked on {}: {:?}",
                         source_path.display(),
@@ -74,7 +96,7 @@ fn test_no_panics_on_truncated_input() {
         let result = analyze_source(input, "truncated_input.rs");
 
         match result {
-            Ok(AnalysisResult { panics, .. }) if !panics.is_empty() => {
+            Ok(panics) if !panics.is_empty() => {
                 panic!("Checks panicked on truncated input: {:?}", panics);
             }
             Ok(_) => {}
@@ -102,7 +124,7 @@ fn test_no_panics_on_edge_cases() {
         let result = analyze_source(input, "edge_case.rs");
 
         match result {
-            Ok(AnalysisResult { panics, .. }) if !panics.is_empty() => {
+            Ok(panics) if !panics.is_empty() => {
                 panic!("Checks panicked on edge case: {:?}", panics);
             }
             Ok(_) => {}
@@ -115,18 +137,12 @@ fn test_no_panics_on_edge_cases() {
 
 #[test]
 fn test_panic_recovery_is_working() {
-    // This test verifies that the analyzer's catch_unwind is functioning
-    // by checking that panics are captured and reported rather than
-    // bubbling up.
-
     let problematic_input = "fn foo() { let x = unsafe { std::ptr::null::<()>().read() }; }";
 
     let result = analyze_source(problematic_input, "panic_test.rs");
 
-    // The important thing is that this doesn't panic the test itself
     match result {
-        Ok(AnalysisResult { panics, .. }) => {
-            // Panics captured is fine; they're being recovered from
+        Ok(panics) => {
             eprintln!("Captured {} check panics (expected)", panics.len());
         }
         Err(e) => {

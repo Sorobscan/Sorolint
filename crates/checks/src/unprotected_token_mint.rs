@@ -45,7 +45,7 @@ impl Check for UnprotectedTokenMintCheck {
                             name
                         ),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unprotected-token-mint-high"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unprotected-token-mint-high"
                                 .to_string(),
                         ),
                         suggestion: Some(

@@ -20,7 +20,7 @@
                   "uri": "src/lib.rs"
                 },
                 "region": {
-                  "startLine": 14
+                  "startLine": 15
                 }
               }
             }
@@ -39,83 +39,7 @@
                   "uri": "src/lib.rs"
                 },
                 "region": {
-                  "startLine": 14
-                }
-              }
-            }
-          ],
-          "message": {
-            "text": "Method `bump` writes to storage but does not emit an event. Consider using `env.events().publish(…)` to allow off-chain indexers to track contract activity."
-          },
-          "ruleId": "missing-event-emission"
-        },
-        {
-          "level": "error",
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/lib.rs"
-                },
-                "region": {
-                  "startLine": 26
-                }
-              }
-            }
-          ],
-          "message": {
-            "text": "Method `bump` writes to `env.storage()` but does not call `env.require_auth()`. Callers may mutate contract state without proving they are authorized."
-          },
-          "ruleId": "missing-require-auth"
-        },
-        {
-          "level": "warning",
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/lib.rs"
-                },
-                "region": {
-                  "startLine": 26
-                }
-              }
-            }
-          ],
-          "message": {
-            "text": "Method `bump` writes to storage but does not emit an event. Consider using `env.events().publish(…)` to allow off-chain indexers to track contract activity."
-          },
-          "ruleId": "missing-event-emission"
-        },
-        {
-          "level": "error",
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/lib.rs"
-                },
-                "region": {
-                  "startLine": 38
-                }
-              }
-            }
-          ],
-          "message": {
-            "text": "Method `bump` writes to `env.storage()` but does not call `env.require_auth()`. Callers may mutate contract state without proving they are authorized."
-          },
-          "ruleId": "missing-require-auth"
-        },
-        {
-          "level": "warning",
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/lib.rs"
-                },
-                "region": {
-                  "startLine": 38
+                  "startLine": 15
                 }
               }
             }
@@ -128,22 +52,9 @@
       ],
       "tool": {
         "driver": {
-          "informationUri": "https://github.com/SorobanGuard/Guard-CLI",
-          "name": "soroban-guard",
+          "informationUri": "https://github.com/Sorobscan/Sorolint",
+          "name": "sorolint",
           "rules": [
-            {
-              "defaultConfiguration": {
-                "level": "error"
-              },
-              "fullDescription": {
-                "text": "Method writes to storage without env.require_auth()"
-              },
-              "helpUri": "https://github.com/SorobanGuard/Guard-CLI",
-              "id": "missing-require-auth",
-              "shortDescription": {
-                "text": "Method writes to storage without env.require_auth()"
-              }
-            },
             {
               "defaultConfiguration": {
                 "level": "warning"
@@ -151,15 +62,28 @@
               "fullDescription": {
                 "text": "State-mutating function emits no events"
               },
-              "helpUri": "https://github.com/SorobanGuard/Guard-CLI",
+              "helpUri": "https://github.com/Sorobscan/Sorolint",
               "id": "missing-event-emission",
               "shortDescription": {
                 "text": "State-mutating function emits no events"
               }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Method writes to storage without env.require_auth()"
+              },
+              "helpUri": "https://github.com/Sorobscan/Sorolint",
+              "id": "missing-require-auth",
+              "shortDescription": {
+                "text": "Method writes to storage without env.require_auth()"
+              }
             }
           ],
-          "version": "0.1.0",
-          "semanticVersion": "0.1.0"
+          "semanticVersion": "0.1.0",
+          "version": "0.1.0"
         }
       }
     }

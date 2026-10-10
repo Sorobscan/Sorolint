@@ -65,7 +65,7 @@ impl Visit<'_> for DivVisitor<'_> {
                     self.fn_name
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#integer-division-truncation-medium"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#integer-division-truncation-medium"
                         .to_string(),
                 ),
                 suggestion: Some(

@@ -29,7 +29,7 @@ impl Check for LargeLoopCheck {
                         function_name: method.sig.ident.to_string(),
                         description: format!("Unbounded {} loop can exhaust compute budget", loop_type),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#large-loop-medium"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#large-loop-medium"
                                 .to_string(),
                         ),
                         suggestion: Some(

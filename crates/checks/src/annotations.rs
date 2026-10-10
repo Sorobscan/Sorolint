@@ -84,7 +84,7 @@ impl Check for MissingContractAnnotationCheck {
                          add `#[contract]` to the struct definition."
                     ),
                     rule_url: Some(
-                        "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-contract-annotation-low"
+                        "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-contract-annotation-low"
                             .to_string(),
                     ),
                     suggestion: Some(format!(

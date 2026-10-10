@@ -3,7 +3,7 @@
 //! `-vulnerable` / `-safe` fixture pair. CONTRIBUTING.md lists these steps for
 //! new checks; this test makes them mandatory. Failures list every missing item.
 
-use soroban_guard_checks::default_checks;
+use sorolint_checks::default_checks;
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 

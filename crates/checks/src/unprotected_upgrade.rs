@@ -45,7 +45,7 @@ impl Check for UnprotectedUpgradeCheck {
                             name
                         ),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unprotected-upgrade-high"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unprotected-upgrade-high"
                                 .to_string(),
                         ),
                         suggestion: Some("Add env.require_auth() at the start".to_string()),

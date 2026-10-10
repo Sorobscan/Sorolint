@@ -56,7 +56,7 @@ impl Check for MissingTtlExtensionCheck {
                          entry can expire and be archived off the ledger."
                     ),
                     rule_url: Some(
-                        "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-ttl-extension-low"
+                        "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-ttl-extension-low"
                             .to_string(),
                     ),
                     suggestion: Some(

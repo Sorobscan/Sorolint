@@ -4,7 +4,7 @@
 /// regressions and identify performance bottlenecks.
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use soroban_guard_analyzer::analyze_source;
+use sorolint_analyzer::analyze_source;
 use std::fs;
 
 fn load_fixture(name: &str) -> String {

@@ -1,12 +1,12 @@
 //! Walk Rust sources, parse with `syn`, and run registered checks.
 //!
-//! Each [`Check`](soroban_guard_checks::Check) runs independently on the same parsed file;
+//! Each [`Check`](sorolint_checks::Check) runs independently on the same parsed file;
 //! findings are concatenated with no shared mutable state between checks.
 
 use rayon::prelude::*;
 use serde::Serialize;
-use soroban_guard_checks::util::contractimpl_functions_with_type_excluding_test;
-use soroban_guard_checks::{default_checks, Check, Finding};
+use sorolint_checks::util::contractimpl_functions_with_type_excluding_test;
+use sorolint_checks::{default_checks, Check, Finding};
 use std::collections::HashSet;
 use std::io::BufRead;
 use std::panic::{catch_unwind, AssertUnwindSafe};
@@ -329,7 +329,21 @@ pub fn is_ignored_path(path: &Path) -> bool {
         .any(|c| matches!(c.as_os_str().to_str(), Some("target" | ".git")))
 }
 
-/// The path relative to `root` shown in findings: the bare file name when `root`
+fn path_to_report_string(path: &Path) -> String {
+    path.to_string_lossy()
+        .replace(std::path::MAIN_SEPARATOR, "/")
+}
+
+fn file_label(path: &Path, root: &Path) -> String {
+    if root.is_file() {
+        path.file_name()
+            .map(Path::new)
+            .map(path_to_report_string)
+            .unwrap_or_default()
+    } else {
+        path_to_report_string(path.strip_prefix(root).unwrap_or(path))
+    }
+}
 
 /// Path used to sort a [`ScanError`] for deterministic multi-error reporting (#629).
 fn scan_error_path(err: &ScanError) -> PathBuf {
@@ -1213,7 +1227,7 @@ mod tests {
 
     /// A check that panics unconditionally when it runs.
     struct PanickingCheck;
-    impl soroban_guard_checks::Check for PanickingCheck {
+    impl sorolint_checks::Check for PanickingCheck {
         fn name(&self) -> &str {
             "panic-check"
         }
@@ -1224,14 +1238,14 @@ mod tests {
 
     /// A check that never panics and always returns one finding.
     struct OkCheck;
-    impl soroban_guard_checks::Check for OkCheck {
+    impl sorolint_checks::Check for OkCheck {
         fn name(&self) -> &str {
             "ok-check"
         }
         fn run(&self, _file: &syn::File, _src: &str) -> Vec<Finding> {
             vec![Finding {
                 check_name: "ok-check".into(),
-                severity: soroban_guard_checks::Severity::Low,
+                severity: sorolint_checks::Severity::Low,
                 file_path: String::new(),
                 line: 1,
                 function_name: "f".into(),
@@ -1257,7 +1271,7 @@ mod tests {
         fs::create_dir_all(root.join("src")).unwrap();
         fs::write(root.join("src/lib.rs"), "pub fn f() {}").unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> =
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> =
             vec![Box::new(PanickingCheck), Box::new(OkCheck)];
         let (results, _, _, check_panics) =
             scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
@@ -1277,7 +1291,8 @@ mod tests {
                 message,
             } => {
                 assert_eq!(check, "panic-check");
-                assert!(path.to_string_lossy().ends_with("src/lib.rs"));
+                let p_str = path.to_string_lossy();
+                assert!(p_str.ends_with("src/lib.rs") || p_str.ends_with("src\\lib.rs"));
                 assert!(message.contains("boom from panic-check"), "got {message}");
             }
             other => panic!("expected CheckPanic, got {other:?}"),
@@ -1479,7 +1494,7 @@ impl C {
         // as some checks emit.
         let finding = Finding {
             check_name: "unchecked-divisor".to_string(),
-            severity: soroban_guard_checks::Severity::High,
+            severity: sorolint_checks::Severity::High,
             file_path: String::new(),
             line: 8,
             function_name: String::new(),
@@ -1530,8 +1545,8 @@ impl C {
         )
         .unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> =
-            vec![Box::new(soroban_guard_checks::UncheckedDivisorCheck)];
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> =
+            vec![Box::new(sorolint_checks::UncheckedDivisorCheck)];
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
 
         let divisor_findings: usize = results
@@ -1551,13 +1566,13 @@ impl C {
 #[cfg(test)]
 mod dedup_tests {
     use super::*;
-    use soroban_guard_checks::{Finding, Severity};
+    use sorolint_checks::{Finding, Severity};
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     /// A check that always returns two identical findings for every file it sees.
     struct DuplicatingCheck;
-    impl soroban_guard_checks::Check for DuplicatingCheck {
+    impl sorolint_checks::Check for DuplicatingCheck {
         fn name(&self) -> &str {
             "dup-check"
         }
@@ -1589,7 +1604,7 @@ mod dedup_tests {
         fs::create_dir_all(root.join("src")).unwrap();
         fs::write(root.join("src/lib.rs"), "pub fn f() {}").unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> =
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> =
             vec![Box::new(DuplicatingCheck)];
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
 
@@ -1601,7 +1616,7 @@ mod dedup_tests {
 
     /// A check that returns two findings at different lines, intentionally reversed.
     struct ReversedCheck;
-    impl soroban_guard_checks::Check for ReversedCheck {
+    impl sorolint_checks::Check for ReversedCheck {
         fn name(&self) -> &str {
             "reversed-check"
         }
@@ -1646,7 +1661,7 @@ mod dedup_tests {
         fs::write(root.join("src/b_module.rs"), "pub fn b() {}").unwrap();
         fs::write(root.join("src/a_module.rs"), "pub fn a() {}").unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> =
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> =
             vec![Box::new(ReversedCheck)];
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
 
@@ -1676,7 +1691,7 @@ mod dedup_tests {
     /// differ only in their description — the shape produced by per-operator checks
     /// like `unchecked-arithmetic` on a single source line.
     struct DistinctSameLineCheck;
-    impl soroban_guard_checks::Check for DistinctSameLineCheck {
+    impl sorolint_checks::Check for DistinctSameLineCheck {
         fn name(&self) -> &str {
             "distinct-same-line"
         }
@@ -1717,7 +1732,7 @@ mod dedup_tests {
         fs::create_dir_all(root.join("src")).unwrap();
         fs::write(root.join("src/lib.rs"), "pub fn f() {}").unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> =
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> =
             vec![Box::new(DistinctSameLineCheck)];
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
 
@@ -1764,7 +1779,7 @@ mod dedup_tests {
         )
         .unwrap();
 
-        let checks = soroban_guard_checks::default_checks_with_config(&[], &[]);
+        let checks = sorolint_checks::default_checks_with_config(&[], &[]);
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
 
         let auth_after_write_count: usize = results
@@ -1814,9 +1829,9 @@ mod dedup_tests {
         )
         .unwrap();
 
-        let checks: Vec<Box<dyn soroban_guard_checks::Check + Send + Sync>> = vec![
-            Box::new(soroban_guard_checks::UncheckedDivisorCheck),
-            Box::new(soroban_guard_checks::IntegerDivisionTruncationCheck),
+        let checks: Vec<Box<dyn sorolint_checks::Check + Send + Sync>> = vec![
+            Box::new(sorolint_checks::UncheckedDivisorCheck),
+            Box::new(sorolint_checks::IntegerDivisionTruncationCheck),
         ];
         let (results, _, _, _) = scan_directory_with_checks(&root, &[], &[], &checks).unwrap();
         let findings: Vec<_> = results.iter().flat_map(|r| r.findings.iter()).collect();

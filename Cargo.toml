@@ -11,7 +11,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["soroban", "security", "static-analysis"]
 categories = ["development-tools", "command-line-utilities"]
-repository = "https://github.com/SorobanGuard/Guard-CLI"
+repository = "https://github.com/Sorobscan/Sorolint"
 
 [workspace.dependencies]
 syn = { version = "2.0", features = ["full", "visit", "extra-traits"] }

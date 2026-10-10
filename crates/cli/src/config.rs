@@ -63,7 +63,7 @@ pub fn find_config_path(scan_path: &Path) -> Option<PathBuf> {
     };
 
     loop {
-        let candidate = dir.join("soroban-guard.toml");
+        let candidate = dir.join("sorolint.toml");
         if candidate.is_file() {
             return Some(candidate);
         }
@@ -103,7 +103,7 @@ mod tests {
     use std::time::{SystemTime, UNIX_EPOCH};
 
     /// A fresh, empty temp directory this test owns exclusively — never
-    /// under any real project's tree, so `.git`/`soroban-guard.toml`
+    /// under any real project's tree, so `.git`/`sorolint.toml`
     /// belonging to *this* repo's own checkout can't leak into a result.
     fn temp_root(label: &str) -> PathBuf {
         let dir = std::env::temp_dir().join(format!(
@@ -118,9 +118,9 @@ mod tests {
     #[test]
     fn finds_config_in_the_scan_directory() {
         let root = temp_root("scandir");
-        fs::write(root.join("soroban-guard.toml"), "[scan]\n").unwrap();
+        fs::write(root.join("sorolint.toml"), "[scan]\n").unwrap();
 
-        assert_eq!(find_config_path(&root), Some(root.join("soroban-guard.toml")));
+        assert_eq!(find_config_path(&root), Some(root.join("sorolint.toml")));
 
         fs::remove_dir_all(root).unwrap();
     }
@@ -129,11 +129,11 @@ mod tests {
     fn finds_config_in_a_parent_directory() {
         let root = temp_root("parent");
         fs::create_dir_all(root.join("src")).unwrap();
-        fs::write(root.join("soroban-guard.toml"), "[scan]\n").unwrap();
+        fs::write(root.join("sorolint.toml"), "[scan]\n").unwrap();
 
         assert_eq!(
             find_config_path(&root.join("src")),
-            Some(root.join("soroban-guard.toml"))
+            Some(root.join("sorolint.toml"))
         );
 
         fs::remove_dir_all(root).unwrap();
@@ -144,7 +144,7 @@ mod tests {
         let root = temp_root("gitstop");
         fs::create_dir_all(root.join("repo/src")).unwrap();
         fs::create_dir_all(root.join("repo/.git")).unwrap();
-        // No soroban-guard.toml anywhere under `repo/`.
+        // No sorolint.toml anywhere under `repo/`.
 
         assert_eq!(find_config_path(&root.join("repo/src")), None);
 
@@ -159,7 +159,7 @@ mod tests {
         // A config exists *above* the repo root — must not be picked up by
         // a scan inside `repo/`, since that would apply an unrelated
         // project's settings.
-        fs::write(root.join("soroban-guard.toml"), "[scan]\n").unwrap();
+        fs::write(root.join("sorolint.toml"), "[scan]\n").unwrap();
 
         assert_eq!(find_config_path(&root.join("repo/src")), None);
 
@@ -170,12 +170,12 @@ mod tests {
     fn works_when_scan_path_is_a_file() {
         let root = temp_root("singlefile");
         fs::create_dir_all(root.join("src")).unwrap();
-        fs::write(root.join("soroban-guard.toml"), "[scan]\n").unwrap();
+        fs::write(root.join("sorolint.toml"), "[scan]\n").unwrap();
         fs::write(root.join("src/lib.rs"), "pub fn f() {}").unwrap();
 
         assert_eq!(
             find_config_path(&root.join("src/lib.rs")),
-            Some(root.join("soroban-guard.toml"))
+            Some(root.join("sorolint.toml"))
         );
 
         fs::remove_dir_all(root).unwrap();
@@ -185,14 +185,14 @@ mod tests {
     fn load_returns_the_config_and_the_path_it_came_from() {
         let root = temp_root("load-ok");
         fs::write(
-            root.join("soroban-guard.toml"),
+            root.join("sorolint.toml"),
             "[scan]\nmin_severity = \"medium\"\n",
         )
         .unwrap();
 
         let (cfg, path) = load(&root).unwrap();
         assert_eq!(cfg.unwrap().scan.min_severity.as_deref(), Some("medium"));
-        assert_eq!(path, Some(root.join("soroban-guard.toml")));
+        assert_eq!(path, Some(root.join("sorolint.toml")));
 
         fs::remove_dir_all(root).unwrap();
     }
@@ -212,10 +212,10 @@ mod tests {
     #[test]
     fn load_reports_a_malformed_config_as_an_error() {
         let root = temp_root("load-bad");
-        fs::write(root.join("soroban-guard.toml"), "not valid toml [[[").unwrap();
+        fs::write(root.join("sorolint.toml"), "not valid toml [[[").unwrap();
 
         let err = load(&root).unwrap_err();
-        assert!(err.contains("soroban-guard.toml"), "{err}");
+        assert!(err.contains("sorolint.toml"), "{err}");
 
         fs::remove_dir_all(root).unwrap();
     }
@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn unknown_top_level_table_is_rejected() {
         let root = temp_root("unknown-top-level");
-        fs::write(root.join("soroban-guard.toml"), "[check]\ndisabled = []\n").unwrap();
+        fs::write(root.join("sorolint.toml"), "[check]\ndisabled = []\n").unwrap();
 
         let err = load(&root).unwrap_err();
         assert!(err.contains("check"), "{err}");
@@ -235,7 +235,7 @@ mod tests {
     fn unknown_key_under_scan_is_rejected() {
         let root = temp_root("unknown-scan-key");
         fs::write(
-            root.join("soroban-guard.toml"),
+            root.join("sorolint.toml"),
             "[scan]\nmin_severity_level = \"high\"\n",
         )
         .unwrap();
@@ -250,7 +250,7 @@ mod tests {
     fn unknown_key_under_checks_sensitive_names_is_rejected() {
         let root = temp_root("unknown-sensitive-names-key");
         fs::write(
-            root.join("soroban-guard.toml"),
+            root.join("sorolint.toml"),
             "[checks.sensitive_names]\nextras = [\"drain\"]\n",
         )
         .unwrap();

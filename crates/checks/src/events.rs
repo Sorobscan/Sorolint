@@ -42,7 +42,7 @@ impl Check for MissingEventEmissionCheck {
                      `env.events().publish(…)` to allow off-chain indexers to track contract activity."
                 ),
                 rule_url: Some(
-                    "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-event-emission-medium"
+                    "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-event-emission-medium"
                         .to_string(),
                 ),
                 suggestion: Some(format!(

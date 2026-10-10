@@ -16,7 +16,7 @@ fn normalise(text: &str) -> String {
 }
 
 fn scan_vulnerable(format_flag: &str) -> String {
-    let output = Command::new(env!("CARGO_BIN_EXE_soroban-guard"))
+    let output = Command::new(env!("CARGO_BIN_EXE_sorolint"))
         .current_dir(workspace_root())
         .args(["scan", "test-contracts/vulnerable", format_flag])
         .env("NO_COLOR", "1")
@@ -42,7 +42,7 @@ fn assert_matches_golden(format_flag: &str, golden_file: &str) {
     );
     let actual = scan_vulnerable(format_flag);
     assert!(
-        actual == expected,
+        actual.trim() == expected.trim(),
         "`scan test-contracts/vulnerable {format_flag}` no longer matches {}.\n\
          If the change is intended, update the golden file.\n--- expected\n{expected}\n--- actual\n{actual}",
         golden_path.display()

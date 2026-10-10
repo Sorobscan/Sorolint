@@ -1,25 +1,12 @@
 {
-  "tool": {
-    "name": "soroban-guard",
-    "version": "0.1.0"
-  },
-  "schema_version": 1,
-  "summary": {
-    "files_scanned": 1,
-    "files_skipped": 0,
-    "high": 3,
-    "low": 0,
-    "medium": 3,
-    "total": 6
-  },
   "findings": [
     {
       "check_name": "missing-require-auth",
       "description": "Method `bump` writes to `env.storage()` but does not call `env.require_auth()`. Callers may mutate contract state without proving they are authorized.",
       "file_path": "src/lib.rs",
       "function_name": "bump",
-      "line": 14,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high",
+      "line": 15,
+      "rule_url": "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-require-auth-high",
       "severity": "high",
       "suggestion": "Add `env.require_auth();` as the first statement in the function body."
     },
@@ -28,50 +15,23 @@
       "description": "Method `bump` writes to storage but does not emit an event. Consider using `env.events().publish(…)` to allow off-chain indexers to track contract activity.",
       "file_path": "src/lib.rs",
       "function_name": "bump",
-      "line": 14,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-event-emission-medium",
-      "severity": "medium",
-      "suggestion": "Add `env.events().publish((symbol_short!(\"bump\"), …), &payload)` after the storage write so off-chain indexers can track this state change."
-    },
-    {
-      "check_name": "missing-require-auth",
-      "description": "Method `bump` writes to `env.storage()` but does not call `env.require_auth()`. Callers may mutate contract state without proving they are authorized.",
-      "file_path": "src/lib.rs",
-      "function_name": "bump",
-      "line": 26,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high",
-      "severity": "high",
-      "suggestion": "Add `env.require_auth();` as the first statement in the function body."
-    },
-    {
-      "check_name": "missing-event-emission",
-      "description": "Method `bump` writes to storage but does not emit an event. Consider using `env.events().publish(…)` to allow off-chain indexers to track contract activity.",
-      "file_path": "src/lib.rs",
-      "function_name": "bump",
-      "line": 26,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-event-emission-medium",
-      "severity": "medium",
-      "suggestion": "Add `env.events().publish((symbol_short!(\"bump\"), …), &payload)` after the storage write so off-chain indexers can track this state change."
-    },
-    {
-      "check_name": "missing-require-auth",
-      "description": "Method `bump` writes to `env.storage()` but does not call `env.require_auth()`. Callers may mutate contract state without proving they are authorized.",
-      "file_path": "src/lib.rs",
-      "function_name": "bump",
-      "line": 38,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-require-auth-high",
-      "severity": "high",
-      "suggestion": "Add `env.require_auth();` as the first statement in the function body."
-    },
-    {
-      "check_name": "missing-event-emission",
-      "description": "Method `bump` writes to storage but does not emit an event. Consider using `env.events().publish(…)` to allow off-chain indexers to track contract activity.",
-      "file_path": "src/lib.rs",
-      "function_name": "bump",
-      "line": 38,
-      "rule_url": "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#missing-event-emission-medium",
+      "line": 15,
+      "rule_url": "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#missing-event-emission-medium",
       "severity": "medium",
       "suggestion": "Add `env.events().publish((symbol_short!(\"bump\"), …), &payload)` after the storage write so off-chain indexers can track this state change."
     }
-  ]
+  ],
+  "schema_version": 1,
+  "summary": {
+    "files_scanned": 1,
+    "files_skipped": 0,
+    "high": 1,
+    "low": 0,
+    "medium": 1,
+    "total": 2
+  },
+  "tool": {
+    "name": "sorolint",
+    "version": "0.1.0"
+  }
 }

@@ -50,7 +50,7 @@ impl Check for DelegateCallRiskCheck {
                              can be redirected to an attacker-controlled contract.",
                         ),
                         rule_url: Some(
-                            "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#delegate-call-risk-high"
+                            "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#delegate-call-risk-high"
                                 .to_string(),
                         ),
                         suggestion: Some(

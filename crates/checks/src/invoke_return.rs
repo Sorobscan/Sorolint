@@ -49,7 +49,7 @@ impl InvokeReturnScan {
                 m.method, self.fn_name
             ),
             rule_url: Some(
-                "https://github.com/SorobanGuard/Guard-CLI/blob/main/docs/checks.md#unchecked-invoke-return-medium"
+                "https://github.com/Sorobscan/Sorolint/blob/main/docs/checks.md#unchecked-invoke-return-medium"
                     .to_string(),
             ),
             suggestion: Some(
